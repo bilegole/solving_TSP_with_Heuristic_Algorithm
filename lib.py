@@ -38,7 +38,7 @@ class solver():
         pass
 
 class tuihuo(solver):
-    def __init__(self, net, noisy=1, temp_dec_type=1, exchange_type=1, n=100, step=0.01):
+    def __init__(self, net, noisy=0, temp_dec_type=1, exchange_type=1, n=100, step=0.01):
         solver.__init__(self,net=net,Pnum=net.points_num,noisy=noisy)
         self.exchenge_type=exchange_type
         if self.noisy>1:
@@ -84,7 +84,7 @@ class tuihuo(solver):
             self.Shortest = candidate
             self.length = ca_length
             flag=0
-        if self.noisy + flag>0:
+        if self.noisy + flag>1:
             print("--------------------")
             print(candidate)
             print(ca_length)
