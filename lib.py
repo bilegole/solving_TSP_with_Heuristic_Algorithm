@@ -13,8 +13,10 @@ def func_and(a,b):
 class net():
     def __init__(self,points_num=10):
         self.points_num=points_num
+
     def edges(self):
         pass
+
     def length(self,way):
         return reduce(lambda x,y:x+y,[self.edges()[way[i]][way[i+1]] for i in range(self.points_num-1)])
 
@@ -25,26 +27,30 @@ class map_2d(net):
         self.x_range=x_range
         self.y_range=y_range
         self.points = [[rd.uniform(0,x_range),rd.uniform(0,y_range)] for i in range(points_num)]
+
     def show(self):
         plt.plot(self.points,'ro')
         plt.show()
+
     def edges(self):
         return np.array([[math.sqrt((pi[0]-qi[0])**2+(pi[1]-qi[1])**2) for pi in self.points] for qi in self.points])
 
 
-class solver():
+class Solver():
     def __init__(self,net,Pnum,noisy=True):
         self.net=net
         self.noisy=noisy
         self.Pnum=Pnum
         self.Shortest = list(range(self.Pnum))
         self.length = self.net.length(self.Shortest)
+
     def start(self):
         pass
 
-class tuihuo(solver):
+
+class tuihuo(Solver):
     def __init__(self, net, noisy=0, temp_dec_type=1, exchange_type=1, n=100, step=0.01):
-        solver.__init__(self,net=net,Pnum=net.points_num,noisy=noisy)
+        Solver.__init__(self, net=net, Pnum=net.points_num, noisy=noisy)
         self.exchenge_type=exchange_type
         if self.noisy>1:
             print("初始路径长度为:",self.length)
@@ -57,6 +63,7 @@ class tuihuo(solver):
             self.count=0
         else:
             self.p=1/n
+
     def temp_change(self):
         # 1 表示温度应该降了
         if self.temp_dec_type:
@@ -98,16 +105,56 @@ class tuihuo(solver):
             print(self.length)
             print("--------------------")
         if self.temp_change():
-            self.tempreture-=self.step
-    def End_Display(self):
+            self.tempreture -= self.step
+
+    def end_display(self):
         print(self.Shortest)
         print(self.length)
+
     def start(self):
-        while self.tempreture>0:
+        while self.tempreture > 0:
             self.Step()
-        if self.noisy>0:
-            self.End_Display()
-        return [self.Shortest.copy(),self.length]
+        if self.noisy > 0:
+            self.end_display()
+        return [self.Shortest.copy(), self.length]
+
+
+class Nearst(Solver):
+    def __init__(self,net_to_solve,noisy=0,start_point=0):
+        Solver.__init__(net=net_to_solve, Pnum=net_to_solve.points_num, noisy=noisy)
+        self.start_point = start_point
+        self.way = None
+
+    def start(self):
+        p = {}
+        for i in range(10):
+            p[i]=False
+        edges = self.net.edges()
+        for i in range(edges.shape[0]):
+            edges[i,i]=math.inf
+        nearst = np.argmin(edges,axis=1)
+
+        tmp = 0
+        way = []
+        while True:
+            p[tmp] = True
+            way.append(tmp)
+            if reduce(func_and, [p[i] for i in p]):
+                break
+            while True:
+                nxt = nearst[tmp]
+                if p[nxt]:
+                    edges[tmp, nxt] = math.inf
+                    edges[nxt, tmp] = math.inf
+                    nearst = np.argmin(edges, axis=1)
+                else:
+                    break
+            tmp = nearst[tmp]
+        self.way = tuple(way)
+        return [way, self.net.length(self.way)]
+
+
+
 
 
 
