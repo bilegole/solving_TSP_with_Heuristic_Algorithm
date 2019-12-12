@@ -4,6 +4,8 @@ import random as rd
 import matplotlib.pyplot as plt
 import math
 from functools import reduce
+import datetime
+
 
 def func_and(a,b):
     return a and b
@@ -121,7 +123,7 @@ class tuihuo(Solver):
 
 class Nearst(Solver):
     def __init__(self,net_to_solve,noisy=0,start_point=0):
-        Solver.__init__(net=net_to_solve, Pnum=net_to_solve.points_num, noisy=noisy)
+        Solver.__init__(self,net=net_to_solve, Pnum=net_to_solve.points_num, noisy=noisy)
         self.start_point = start_point
         self.way = None
 
