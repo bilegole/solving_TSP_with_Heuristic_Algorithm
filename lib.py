@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 import math
 from functools import reduce
 
+def func_and(a,b):
+    return a and b
+
+
+
 class net():
     def __init__(self,points_num=10):
         self.points_num=points_num
@@ -103,6 +108,8 @@ class tuihuo(solver):
         if self.noisy>0:
             self.End_Display()
         return [self.Shortest.copy(),self.length]
+
+
 
 
 
